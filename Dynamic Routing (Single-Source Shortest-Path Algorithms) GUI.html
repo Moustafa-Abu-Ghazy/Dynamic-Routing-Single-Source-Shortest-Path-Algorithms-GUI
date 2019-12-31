@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic Routing (Single-Source Shortest-Path Algorithms) GUI</title>
+    <link rel="stylesheet" href="static/css/app.css">
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <script type="text/javascript" src="static/js/jquery-3.3.1.min.js"></script>
+    <script src="static/js/popper.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+</head>
+<body style="background-color: #f1f1f1">
+<div class="jumbotron text-center" style="margin-bottom:0;">
+    <h1>Dynamic Routing (Single-Source Shortest-Path Algorithms) GUI</h1>
+</div>
+<button type="button" class="btn btn-secondary" style="width: 100%" onclick="Save_Topology()">
+    Save Topology
+</button>
+<div id="svg-div" style="width: available;height: 400px;overflow-x: scroll;">
+    <svg id="svg-edit-window" style="background-color: lightblue;overflow: auto;"></svg>
+</div>
+<hr/>
+<div>
+    <h1>Editing the graph:</h1>
+    <ul>
+        <li>Click in the open space to add a New Router.</li>
+        <li>Drag from one Router to another to add a directed Link.</li>
+        <li>Ctrl-drag a Router to move the graph layout.</li>
+        <li>Click a Router or a Link to select it.</li>
+        <li>When a Router is selected: R toggles reflexivity, Delete removes the Router.</li>
+        <li>When an Link is selected: L(eft), R(ight), B(oth) change direction, C(ost) change cost, Delete removes the
+            Link.
+        </li>
+    </ul>
+</div>
+<hr/>
+<div id="cost-matrix" class="table-responsive">
+    <h1>Cost Matrix (Routing Tables): [Dijkstra]
+        <button type="button" class="btn btn-secondary" onclick="Dijkstra()">
+            Run Dijkstra Algorithm
+        </button>
+    </h1>
+    <table id="d-cost-matrix-table" class="table table-dark table-striped table-hover" style="text-align: center">
+        <thead>
+        <tr>
+            <th rowspan='2' colspan='2' style='vertical-align : middle;text-align:center;'>From</th>
+            <th colspan="3">To</th>
+        </tr>
+        <tr>
+            <th>R-0</th>
+            <th>R-1</th>
+            <th>R-2</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th colspan="5"></th>
+        </tr>
+        <tr>
+            <th rowspan='2' style='vertical-align : middle;text-align:center;white-space: nowrap;'>R-0</th>
+            <th>Cost:</th>
+            <td id="d-linktdv-0-0" style='white-space: nowrap;'></td>
+            <td id="d-linktdv-0-1" style='white-space: nowrap;'></td>
+            <td id="d-linktdv-0-2" style='white-space: nowrap;'></td>
+        </tr>
+        <tr>
+            <th>Path:</th>
+            <td id="d-linktdp-0-0" style='white-space: nowrap;'></td>
+            <td id="d-linktdp-0-1" style='white-space: nowrap;'></td>
+            <td id="d-linktdp-0-2" style='white-space: nowrap;'></td>
+        </tr>
+        <tr>
+            <th colspan="5"></th>
+        </tr>
+        <tr>
+            <th rowspan='2' style='vertical-align : middle;text-align:center;white-space: nowrap;'>R-1</th>
+            <th>Cost:</th>
+            <td id="d-linktdv-1-0" style='white-space: nowrap;'></td>
+            <td id="d-linktdv-1-1" style='white-space: nowrap;'></td>
+            <td id="d-linktdv-1-2" style='white-space: nowrap;'></td>
+        </tr>
+        <tr>
+            <th>Path:</th>
+            <td id="d-linktdp-1-0" style='white-space: nowrap;'></td>
+            <td id="d-linktdp-1-1" style='white-space: nowrap;'></td>
+            <td id="d-linktdp-1-2" style='white-space: nowrap;'></td>
+        </tr>
+        <tr>
+            <th colspan="5"></th>
+        </tr>
+        <tr>
+            <th rowspan='2' style='vertical-align : middle;text-align:center;white-space: nowrap;'>R-2</th>
+            <th>Cost:</th>
+            <td id="d-linktdv-2-0" style='white-space: nowrap;'></td>
+            <td id="d-linktdv-2-1" style='white-space: nowrap;'></td>
+            <td id="d-linktdv-2-2" style='white-space: nowrap;'></td>
+        </tr>
+        <tr>
+            <th>Path:</th>
+            <td id="d-linktdp-2-0" style='white-space: nowrap;'></td>
+            <td id="d-linktdp-2-1" style='white-space: nowrap;'></td>
+            <td id="d-linktdp-2-2" style='white-space: nowrap;'></td>
+        </tr>
+        <tr>
+            <th colspan="5"></th>
+        </tr>
+        </tbody>
+    </table>
+    <hr/>
+    <h1>Cost Matrix (Routing Tables): [Bellman–Ford]
+        <button type="button" class="btn btn-secondary" onclick="BellmanFord()">
+            Run Bellman–Ford Algorithm
+        </button>
+    </h1>
+    <table id="b-cost-matrix-table" class="table table-dark table-striped table-hover" style="text-align: center">
+        <thead>
+        <tr>
+            <th rowspan='2' colspan='2' style='vertical-align : middle;text-align:center;'>From</th>
+            <th colspan="3">To</th>
+        </tr>
+        <tr>
+            <th>R-0</th>
+            <th>R-1</th>
+            <th>R-2</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th colspan="5"></th>
+        </tr>
+        <tr>
+            <th rowspan='2' style='vertical-align : middle;text-align:center;white-space: nowrap;'>R-0</th>
+            <th>Cost:</th>
+            <td id="b-linktdv-0-0" style='white-space: nowrap;'></td>
+            <td id="b-linktdv-0-1" style='white-space: nowrap;'></td>
+            <td id="b-linktdv-0-2" style='white-space: nowrap;'></td>
+        </tr>
+        <tr>
+            <th>Path:</th>
+            <td id="b-linktdp-0-0" style='white-space: nowrap;'></td>
+            <td id="b-linktdp-0-1" style='white-space: nowrap;'></td>
+            <td id="b-linktdp-0-2" style='white-space: nowrap;'></td>
+        </tr>
+        <tr>
+            <th colspan="5"></th>
+        </tr>
+        <tr>
+            <th rowspan='2' style='vertical-align : middle;text-align:center;white-space: nowrap;'>R-1</th>
+            <th>Cost:</th>
+            <td id="b-linktdv-1-0" style='white-space: nowrap;'></td>
+            <td id="b-linktdv-1-1" style='white-space: nowrap;'></td>
+            <td id="b-linktdv-1-2" style='white-space: nowrap;'></td>
+        </tr>
+        <tr>
+            <th>Path:</th>
+            <td id="b-linktdp-1-0" style='white-space: nowrap;'></td>
+            <td id="b-linktdp-1-1" style='white-space: nowrap;'></td>
+            <td id="b-linktdp-1-2" style='white-space: nowrap;'></td>
+        </tr>
+        <tr>
+            <th colspan="5"></th>
+        </tr>
+        <tr>
+            <th rowspan='2' style='vertical-align : middle;text-align:center;white-space: nowrap;'>R-2</th>
+            <th>Cost:</th>
+            <td id="b-linktdv-2-0" style='white-space: nowrap;'></td>
+            <td id="b-linktdv-2-1" style='white-space: nowrap;'></td>
+            <td id="b-linktdv-2-2" style='white-space: nowrap;'></td>
+        </tr>
+        <tr>
+            <th>Path:</th>
+            <td id="b-linktdp-2-0" style='white-space: nowrap;'></td>
+            <td id="b-linktdp-2-1" style='white-space: nowrap;'></td>
+            <td id="b-linktdp-2-2" style='white-space: nowrap;'></td>
+        </tr>
+        <tr>
+            <th colspan="5"></th>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<hr/>
+<div class="jumbotron text-center" style="margin-bottom:0">
+    <p>
+        Faculty of Engineering, Helwan University <br/>
+        4th Computer Engineering <br/>
+    </p>
+    <hr/>
+</div>
+</body>
+<script id="script-d3-1" src="static/js/d3.v5.min.js"></script>
+<script id="script-d3-2" src="static/js/app.js"></script>
+<script type="text/javascript">
+    window.onload = function () {
+        $("#svg-div").scrollTop(($("#svg-edit-window").height() - $("#svg-div").height()) / 2);
+        $("#svg-div").scrollLeft(($("#svg-edit-window").width() - $("#svg-div").width()) / 2);
+    };
+
+    let CostMatrix;
+
+    function Save_Topology() {
+        if (document.getElementById("svg-edit-window")) {
+            var old_element = document.getElementById("svg-edit-window");
+            var new_element = old_element.cloneNode(true);
+            old_element.parentNode.replaceChild(new_element, old_element);
+            document.getElementById("svg-edit-window").id = "svg-view-window";
+            (elem = document.getElementById("script-d3-1")).parentNode.removeChild(elem);
+            (elem = document.getElementById("script-d3-2")).parentNode.removeChild(elem);
+        }
+        PrepareTables();
+        LoadCoasts();
+    }
+
+    function PrepareTables() {
+        const NumberOfNodes = lastNodeId + 1;
+        const Dtable = document.getElementById("d-cost-matrix-table");
+        let text = "<tr>" + "<th rowspan='2' colspan='2' style='vertical-align : middle;text-align:center;'>From</th>" + "<th colspan='" + NumberOfNodes + "'>To</th></tr>";
+        text += "<tr>";
+        for (let i = 0; i < NumberOfNodes; i++) {
+            text += "<th>R-" + i + "</th>";
+        }
+        text += "</tr>";
+        Dtable.tHead.innerHTML = text;
+        text = "<tr><th colspan='" + NumberOfNodes + 2 + "'></th></tr>";
+        for (let i = 0; i < NumberOfNodes; i++) {
+            let j;
+            text += "<tr> <th rowspan='2' style='vertical-align : middle;text-align:center;white-space: nowrap;'>R-" + i + "</th>";
+            text += "<th>Cost:</th>";
+            for (j = 0; j < NumberOfNodes; j++) {
+                text += "<td id='d-linktdv-" + i + "-" + j + "' style='white-space: nowrap;'>INF</td>";
+            }
+            text += "</tr>";
+            text += "<tr>";
+            text += "<th>Path:</th>";
+            for (j = 0; j < NumberOfNodes; j++) {
+                text += "<td id='d-linktdp-" + i + "-" + j + "' style='white-space: nowrap;'>NONE</td>";
+            }
+            text += "</tr>";
+            text += "<tr><th colspan='" + NumberOfNodes + 2 + "'></th></tr>";
+        }
+        Dtable.tBodies.item(0).innerHTML = text;
+        const Btable = document.getElementById("b-cost-matrix-table");
+        text = "<tr>" + "<th rowspan='2' colspan='2' style='vertical-align : middle;text-align:center;'>From</th>" + "<th colspan='" + NumberOfNodes + "'>To</th></tr>";
+        text += "<tr>";
+        for (let i = 0; i < NumberOfNodes; i++) {
+            text += "<th>R-" + i + "</th>";
+        }
+        text += "</tr>";
+        Btable.tHead.innerHTML = text;
+        text = "<tr><th colspan='" + NumberOfNodes + 2 + "'></th></tr>";
+        for (let i = 0; i < NumberOfNodes; i++) {
+            let j;
+            text += "<tr> <th rowspan='2' style='vertical-align : middle;text-align:center;white-space: nowrap;'>R-" + i + "</th>";
+            text += "<th>Cost:</th>";
+            for (j = 0; j < NumberOfNodes; j++) {
+                text += "<td id='b-linktdv-" + i + "-" + j + "' style='white-space: nowrap;'>INF</td>";
+            }
+            text += "</tr>";
+            text += "<tr>";
+            text += "<th>Path:</th>";
+            for (j = 0; j < NumberOfNodes; j++) {
+                text += "<td id='b-linktdp-" + i + "-" + j + "' style='white-space: nowrap;'>NONE</td>";
+            }
+            text += "</tr>";
+            text += "<tr><th colspan='" + NumberOfNodes + 2 + "'></th></tr>";
+        }
+        Btable.tBodies.item(0).innerHTML = text;
+    }
+
+    function LoadCoasts() {
+        const NumberOfNodes = lastNodeId + 1;
+        CostMatrix = new Array(NumberOfNodes);
+        for (let i = 0; i < CostMatrix.length; i++) {
+            CostMatrix[i] = new Array(NumberOfNodes);
+            for (let j = 0; j < CostMatrix.length; j++) {
+                CostMatrix[i][j] = Infinity;
+            }
+            CostMatrix[i][i] = 0;
+            document.getElementById("d-linktdv-" + i + "-" + i).innerHTML = "0";
+            document.getElementById("d-linktdp-" + i + "-" + i).innerHTML = "-";
+            document.getElementById("b-linktdv-" + i + "-" + i).innerHTML = "0";
+            document.getElementById("b-linktdp-" + i + "-" + i).innerHTML = "-";
+        }
+        for (let i = 0; i < links.length; i++) {
+            let s = links[i].source.id;
+            let t = links[i].target.id;
+            if (links[i].right) {
+                CostMatrix[s][t] = links[i].cost_right;
+                document.getElementById("d-linktdv-" + s + "-" + t).innerHTML = CostMatrix[s][t];
+                document.getElementById("d-linktdp-" + s + "-" + t).innerHTML = "--> R-" + t;
+                document.getElementById("b-linktdv-" + s + "-" + t).innerHTML = CostMatrix[s][t];
+                document.getElementById("b-linktdp-" + s + "-" + t).innerHTML = "--> R-" + t;
+            }
+            if (links[i].left) {
+                CostMatrix[t][s] = links[i].cost_left;
+                document.getElementById("d-linktdv-" + t + "-" + s).innerHTML = CostMatrix[t][s];
+                document.getElementById("d-linktdp-" + t + "-" + s).innerHTML = "--> R-" + s;
+                document.getElementById("b-linktdv-" + t + "-" + s).innerHTML = CostMatrix[t][s];
+                document.getElementById("b-linktdp-" + t + "-" + s).innerHTML = "--> R-" + s;
+            }
+        }
+    }
+
+    function Dijkstra() {
+        let dim = CostMatrix.length;
+        for (let Source = 0; Source < dim; Source++) {
+            let Z = new Array(dim);
+            for (let i = 0; i < Z.length; i++) {
+                Z[i] = {Previous: -1, Cost: Infinity, Visited: false};
+            }
+            Z[Source].Previous = Source;
+            Z[Source].Cost = 0;
+            Z[Source].Visited = true;
+            let temp = Source;
+            let tempweight = 0;
+            do {
+                Z[temp].Visited = true;
+                for (let i = 0; i < dim; i++) {
+                    if ((!Z[i].Visited) && (Z[i].Cost > (CostMatrix[temp][i] + tempweight))) {
+                        Z[i].Cost = CostMatrix[temp][i] + tempweight;
+                        Z[i].Previous = temp;
+                    }
+                }
+                tempweight = Infinity;
+                temp = -1;
+                for (let i = 0; i < dim; i++) {
+                    if ((!Z[i].Visited) && (Z[i].Cost < tempweight)) {
+                        tempweight = Z[i].Cost;
+                        temp = i;
+                    }
+                }
+            } while (temp !== -1);
+            for (let Target = 0; Target < dim; Target++) {
+                if (Source === Target) {
+                    continue;
+                }
+                let ShortestPath = "";
+                let ShortestPathList = [];
+                let ShortestPathCost = Z[Target].Cost;
+                if (ShortestPathCost === Infinity) {
+                    continue;
+                }
+                for (let i = Target; i !== Source; i = Z[i].Previous) {
+                    ShortestPathList.push(i);
+                }
+                let last = "";
+                for (let i = 0; i <= ShortestPathList.length; i++) {
+                    last = "--> R-" + ShortestPathList.pop();
+                    ShortestPath += last + " ";
+                }
+                if (last !== "--> R-" + Target) {
+                    ShortestPath += "--> R-" + Target;
+                }
+                document.getElementById("d-linktdv-" + Source + "-" + Target).innerHTML = ShortestPathCost.toString();
+                document.getElementById("d-linktdp-" + Source + "-" + Target).innerHTML = ShortestPath;
+            }
+        }
+    }
+
+    function BellmanFord() {
+        let dim = CostMatrix.length;
+        for (let Source = 0; Source < dim; Source++) {
+            let Z = new Array(dim);
+            for (let i = 0; i < Z.length; i++) {
+                Z[i] = {Previous: -1, Cost: Infinity};
+            }
+            Z[Source].Cost = 0;
+            for (let k = 0; k < dim - 1; k++) {
+                for (let i = 0; i < dim; i++) {
+                    for (let j = 0; j < dim; j++) {
+                        if (Z[i].Cost + CostMatrix[i][j] < Z[j].Cost) {
+                            Z[j].Cost = Z[i].Cost + CostMatrix[i][j];
+                            Z[j].Previous = i;
+                        }
+                    }
+                }
+            }
+            for (let k = 0; k < dim - 1; k++) {
+                for (let i = 0; i < dim; i++) {
+                    for (let j = 0; j < dim; j++) {
+                        if (Z[i].Cost + CostMatrix[i][j] < Z[j].Cost) {
+                            Z[j].Cost = -Infinity;
+                            Z[j].Previous = -2;
+                        }
+                    }
+                }
+            }
+            for (let Target = 0; Target < dim; Target++) {
+                if (Source === Target) {
+                    continue;
+                }
+                let ShortestPath = "";
+                let ShortestPathList = [];
+                let ShortestPathCost = Z[Target].Cost;
+                if (ShortestPathCost === Infinity) {
+                    continue;
+                }
+                let NeedToContinue = false;
+                for (let i = Target; i !== Source; i = Z[i].Previous) {
+                    if (Z[i].Previous === -2) {
+                        document.getElementById("b-linktdv-" + Source + "-" + Target).innerHTML = "Negative Weight Cycle Detected";
+                        document.getElementById("b-linktdp-" + Source + "-" + Target).innerHTML = "Infinite Number of Shortest Paths";
+                        NeedToContinue = true;
+                        break;
+                    }
+                    ShortestPathList.push(i);
+                }
+                if (NeedToContinue) {
+                    continue;
+                }
+                let last = "";
+                for (let i = 0; i <= ShortestPathList.length; i++) {
+                    last = "--> R-" + ShortestPathList.pop();
+                    ShortestPath += last + " ";
+                }
+                if (last !== "--> R-" + Target) {
+                    ShortestPath += "--> R-" + Target;
+                }
+                document.getElementById("b-linktdv-" + Source + "-" + Target).innerHTML = ShortestPathCost.toString();
+                document.getElementById("b-linktdp-" + Source + "-" + Target).innerHTML = ShortestPath;
+            }
+        }
+    }
+</script>
+</html>
